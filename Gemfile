@@ -45,6 +45,7 @@ end
 group :production do
   gem 'spring'
   gem 'mysql2', '~> 0.5'
+  gem 'unicorn', '5.4.1'
 end
 
 gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
