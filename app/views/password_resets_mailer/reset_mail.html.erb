@@ -1,0 +1,8 @@
+<h2><%= @user.account_name %></h2>
+
+<p>
+  パスワードリセットの申請がございました。<br>
+  もし心あたりがなければ、このメールを無視してください。
+</p>
+
+<p><%= link_to 'パスワード更新ページはこちら', "#{ENV["FRONT_PATH"]}/password_resets/#{@user.reset_token}" %></p>

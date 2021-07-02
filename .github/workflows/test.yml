@@ -1,0 +1,64 @@
+name: Rails
+
+on: [push]
+
+jobs:
+  rspec:
+    runs-on: ubuntu-18.04
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 2.7.1
+        bundler-cache: true
+    - name: apt-get
+      run: |
+        sudo apt-get update
+        sudo apt-get install libmysqlclient-dev
+
+    - name: Cache gems
+      uses: actions/cache@preview
+      with:
+        path: vendor/bundle
+        key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-gem-
+
+    - name: Cache node modules
+      uses: actions/cache@preview
+      with:
+        path: node_modules
+        key: ${{ runner.os }}-node-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+
+    - name: Run bundle install
+      run: |
+        gem install bundler
+        bundle install --jobs 4 --retry 3 --path vendor/bundle
+
+    - name: Run yarn install
+      run:  yarn install --check-files
+
+    - name: Set up database
+      run: |
+        sudo systemctl start mysql
+        cp config/database.yml.ci config/database.yml
+        bundle exec rails db:create
+      env:
+        RAILS_ENV: test
+
+    - name: Run migrate
+      run: bundle exec rails db:migrate
+      env:
+        RAILS_ENV: test
+
+    - name: Run rubocop
+      run: |
+        bundle exec rubocop
+
+    - name: Run rspec
+      run: bundle exec rspec
+      env:
+        RAILS_ENV: test
