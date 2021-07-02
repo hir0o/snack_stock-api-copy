@@ -8,7 +8,7 @@ CarrierWave::SanitizedFile.sanitize_regexp = /[^[:word:].\-+]/
 CarrierWave.configure do |config|
   config.storage = :fog
   config.fog_provider = 'fog/aws'
-  config.fog_directory = 'workstyle-img'
+  config.fog_directory = 'snack-stock'
   config.fog_credentials = {
     provider: 'AWS',
     aws_access_key_id: ENV['AWS_S3_ACCESS_KEY_ID'],
